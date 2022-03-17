@@ -214,6 +214,7 @@ window.onload = function() {
       if(parent.get_name() == null && message == null){
         return
       }
+     
 
       // Get the firebase database value
       db.ref('chats/').once('value', function(message_object) {
@@ -284,6 +285,90 @@ window.onload = function() {
             }
           })
         })
+     document.getElementById("bar").addEventListener("keydown", function(event) {
+  if (event.code === "Enter") {
+        send_message(message){
+      var parent = this
+      // if the local storage name is null and there is no message
+      // then return/don't send the message. The user is somehow hacking
+      // to send messages. Or they just deleted the
+      // localstorage themselves. But hacking sounds cooler!!
+      if(parent.get_name() == null && message == null){
+        return
+      }
+     
+
+      // Get the firebase database value
+      db.ref('chats/').once('value', function(message_object) {
+        // This index is mortant. It will help organize the chat in order
+        var index = parseFloat(message_object.numChildren()) + 1
+        db.ref('chats/' + `message_${index}`).set({
+          name: parent.get_name(),
+          message: message,
+          index: index
+        })
+        .then(function(){
+          // After we send the chat refresh to get the new messages
+          parent.refresh_chat()
+        })
+      })
+    }
+    // Get name. Gets the username from localStorage
+    get_name(){
+      // Get the name from localstorage
+      if(localStorage.getItem('name') != null){
+        return localStorage.getItem('name')
+      }else{
+        this.home()
+        return null
+      }
+    }
+    // Refresh chat gets the message/chat data from firebase
+    refresh_chat(){
+      var chat_content_container = document.getElementById('chat_content_container')
+
+      // Get the chats from firebase
+      db.ref('chats/').on('value', function(messages_object) {
+        // When we get the data clear chat_content_container
+        chat_content_container.innerHTML = ''
+        // if there are no messages in the chat. Retrun . Don't load anything
+        if(messages_object.numChildren() == 0){
+          return
+        }
+
+        // OK! SO IF YOU'RE A ROOKIE CODER. THIS IS GOING TO BE
+        // SUPER EASY-ISH! I THINK. MAYBE NOT. WE'LL SEE!
+
+        // convert the message object values to an array.
+        var messages = Object.values(messages_object.val());
+        var guide = [] // this will be our guide to organizing the messages
+        var unordered = [] // unordered messages
+        var ordered = [] // we're going to order these messages
+
+        for (var i, i = 0; i < messages.length; i++) {
+          // The guide is simply an array from 0 to the messages.length
+          guide.push(i+1)
+          // unordered is the [message, index_of_the_message]
+          unordered.push([messages[i], messages[i].index]);
+        }
+
+        // Now this is straight up from stack overflow 🤣
+        // Sort the unordered messages by the guide
+        guide.forEach(function(key) {
+          var found = false
+          unordered = unordered.filter(function(item) {
+            if(!found && item[1] == key) {
+              // Now push the ordered messages to ordered array
+              ordered.push(item[0])
+              found = true
+              return false
+            }else{
+              return true
+            }
+          })
+        })
+  }
+});
 
         // Now we're done. Simply display the ordered messages
         ordered.forEach(function(data) {
