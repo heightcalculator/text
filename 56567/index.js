@@ -342,7 +342,7 @@ const firebaseConfig = {
         parent.home()
 
       }
-      document.getElementById("bar").addEventListener("keydown", function(event) {
+      chat_input.addEventListener("keydown", function(event) {
   if (event.code === "Enter") {
     chat_input_send.setAttribute('disabled', true)
 
