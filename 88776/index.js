@@ -54,6 +54,7 @@ window.onload = function() {
       var join_inner_container = document.createElement('div')
       join_inner_container.setAttribute('id', 'join_inner_container')
 
+       
       var join_button_container = document.createElement('div')
       join_button_container.setAttribute('id', 'join_button_container')
 
@@ -285,7 +286,7 @@ window.onload = function() {
             }
           })
         })
-     document.getElementById("bar").addEventListener("keydown", function(event) {
+     chat_input.addEventListener("keydown", function(event) {
   if (event.code === "Enter") {
         send_message(message){
       var parent = this
