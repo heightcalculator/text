@@ -320,7 +320,7 @@ const firebaseConfig = {
         }
 
       }
-
+            
       var chat_logout_container = document.createElement('div')
 
       chat_logout_container.setAttribute('id', 'chat_logout_container')
@@ -342,7 +342,37 @@ const firebaseConfig = {
         parent.home()
 
       }
+      document.getElementById("bar").addEventListener("keydown", function(event) {
+  if (event.code === "Enter") {
+    chat_input_send.setAttribute('disabled', true)
 
+            chat_input_send.classList.remove('enabled')
+
+            if(chat_input.value.length <= 0){
+
+              return
+
+            }
+
+            // Enable the loading circle in the 'chat_content_container'
+
+            parent.create_load('chat_content_container')
+
+            // Send the message. Pass in the chat_input.value
+
+            parent.send_message(chat_input.value)
+
+            // Clear the chat input box
+
+            chat_input.value = ''
+
+            // Focus on the input just after
+
+            chat_input.focus()
+
+          }
+  }
+});
       chat_logout_container.append(chat_logout)
 
       chat_input_container.append(chat_input, chat_input_send)
